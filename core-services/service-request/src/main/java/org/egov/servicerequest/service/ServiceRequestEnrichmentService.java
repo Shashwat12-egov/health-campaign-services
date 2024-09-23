@@ -10,11 +10,7 @@ import org.egov.servicerequest.web.models.ServiceDefinitionRequest;
 import org.egov.servicerequest.web.models.ServiceRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class ServiceRequestEnrichmentService {
@@ -83,6 +79,38 @@ public class ServiceRequestEnrichmentService {
 
         return attributeCodeVsValueMap;
 
+    }
+
+    public Map<String, Object> enrichServiceUpdateRequest(ServiceRequest serviceRequest,Service existingServices) {
+        Service service = serviceRequest.getService();
+        RequestInfo requestInfo = serviceRequest.getRequestInfo();
+
+        // Prepare audit details
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setCreatedBy(existingServices.getAuditDetails().getCreatedBy());
+        auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+        auditDetails.setCreatedTime(existingServices.getAuditDetails().getCreatedTime());
+        auditDetails.setLastModifiedTime(System.currentTimeMillis());
+
+        // Enrich audit details for service
+        service.setAuditDetails(auditDetails);
+
+        Map<String, String> attributeCodeVsid = new HashMap<>();
+        existingServices.getAttributes().forEach(attributes -> {
+            attributeCodeVsid.put(attributes.getAttributeCode(), attributes.getId());
+        });
+
+        // Enrich audit details in attribute values
+        service.getAttributes().forEach(attributeValue -> {
+            attributeValue.setId(attributeCodeVsid.get(attributeValue.getAttributeCode()));
+            attributeValue.setAuditDetails(auditDetails);
+            attributeValue.setReferenceId(service.getId());
+        });
+
+        // Convert incoming attribute value into JSON object
+        Map<String, Object> attributeCodeVsValueMap = convertAttributeValuesIntoJson(serviceRequest);
+
+        return attributeCodeVsValueMap;
     }
 
     private Map<String, Object> convertAttributeValuesIntoJson(ServiceRequest serviceRequest) {

@@ -4,6 +4,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ErrorCode {
+    public static final String SERVICE_REQUEST_EXISTS_ERR_CODE = "SERVICE_REQUEST_EXISTS_ERR_CODE";
+
+    public static final String SERVICE_REQUEST_EXISTS_ERR_CODE_MSG = "Service with the given tenantId and id combination does not exists;";
+
+    public static final String SERVICE_REQUEST_INVALID_SERVICE_ID_CODE = "SERVICE_REQUEST_SERVICE_ID_REQUIRED";
+
+    public static final String SERVICE_REQUEST_INVALID_SERVICE_ID_MSG = "Service id is required";
+
     public static final String SERVICE_REQUEST_INVALID_SERVICE_DEF_ID_CODE = "SERVICE_REQUEST_INVALID_SERVICE_DEF_ID";
 
     public static final String SERVICE_REQUEST_INVALID_SERVICE_DEF_ID_MSG = "Invalid service definition id";

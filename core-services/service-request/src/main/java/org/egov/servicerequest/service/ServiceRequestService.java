@@ -62,10 +62,18 @@ public class ServiceRequestService {
     }
 
     public org.egov.servicerequest.web.models.Service updateService(ServiceRequest serviceRequest) {
+        // Validate incoming service definition request
+        List<org.egov.servicerequest.web.models.Service> existingServices = serviceRequestValidator.validateServiceUpdateRequest(serviceRequest);
 
-        // TO DO
+        // Enrich incoming service definition request
+        Map<String, Object> attributeCodeVsValueMap = enrichmentService.enrichServiceUpdateRequest(serviceRequest,existingServices.get(0));
+
+        // Producer statement to emit service definition to kafka for persisting
+        producer.push(config.getServiceUpdateTopic(), serviceRequest);
+
+        // Restore attribute values to the type in which it was sent in service request
+        enrichmentService.setAttributeValuesBackToNativeState(serviceRequest, attributeCodeVsValueMap);
 
         return serviceRequest.getService();
     }
-
 }

@@ -40,7 +40,7 @@ public class ServiceController {
         Service service = serviceRequestService.createService(serviceRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(serviceRequest.getRequestInfo(), true);
         ServiceResponse response = ServiceResponse.builder().service(Collections.singletonList(service)).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value="/v1/_search", method = RequestMethod.POST)
@@ -55,7 +55,6 @@ public class ServiceController {
         Service service = serviceRequestService.updateService(serviceRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(serviceRequest.getRequestInfo(), true);
         ServiceResponse response = ServiceResponse.builder().service(Collections.singletonList(service)).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
-
 }
